@@ -1,4 +1,5 @@
 import Component from "@ember/component";
+
 const API_ENDPOINT = settings.status_endpoint;
 const IMPACT = {
   minor: 0,
@@ -29,7 +30,7 @@ export default class StatusAlert extends Component {
           .then((response) => response.json())
           .then((data) => {
             let { status, incidents } = data;
-            
+
             // if no incidents, show nothing
             if (!incidents.length) {
               this.set("showStatus", false);
@@ -41,10 +42,9 @@ export default class StatusAlert extends Component {
             let maxImpact = incidents[0].impact;
             let currentStatusMessage = incidents[0].name;
 
-            // check for higher impact incidents 
+            // check for higher impact incidents
             // in case there are multiple active
             for(let incident of incidents) {
-              console.log('### incident', {incident});
               let incidentImpact = incident.impact;
               if (IMPACT[incidentImpact] > IMPACT[maxImpact]) {
                 maxImpact = incidentImpact;
@@ -63,4 +63,12 @@ export default class StatusAlert extends Component {
       }
     }
   }
+
+  <template>
+    {{#if this.showStatus}}
+      <div class="discourse-status-alert indicator-{{this.indicator}}">
+        <a href="https://{{this.statusHref}}">{{this.statusMessage}}</a>
+      </div>
+    {{/if}}
+  </template>
 }
